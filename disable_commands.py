@@ -171,8 +171,8 @@ if __name__ == "__main__":
     try:
         if os.geteuid() != 0:
             logger.critical("User Must be ROOT!")
-            exit()
+            exit(1)
         get_users_gid()
-    except Exception:
-        logger.exception("Exception in get_users_gid(): ")
+    except Exception as e:
+        logger.exception("Exception in get_users_gid(): {0}".format(e))
         exit(1)
