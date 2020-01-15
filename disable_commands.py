@@ -32,7 +32,7 @@ LOGGING = {
     'loggers': {
         'user-commands': {
             'handlers': ['stdout', 'sys-logger6'],
-            'level': logging.INFO,
+            'level': logging.DEBUG,
             'propagate': True,
         },
     }
@@ -54,7 +54,7 @@ def commands_config(user, group):
     User and Group are passed automatically from the get_users_gid funcion
     It search for the denied command list per user goup.
     The command's list file shall be located in /tmp and the filename shall be commands_{groupname}.
-    After found the file the program will write a bashrc.done_{group} and use that file to aplly the 
+    After found the file the program will write a bashrc.done_{group} and use that file to aplly the
     rules in the user .bashrc file
     '''
     logger.debug('{0},{1}'.format(user, group))
@@ -96,9 +96,16 @@ def commands_config(user, group):
                                                 else:
                                                     logger.debug(
                                                         'Row with {0} missing'.format(row))
+                                                    logger.debug(
+                                                        'opening the bashrc file')
                                                     with open(bashrc_orig, mode='a')as original:
+                                                        logger.debug(
+                                                            'inside the bashrc.done')
+                                                        logger.debug(
+                                                            'WRITING: ' + row)
                                                         original.write(
-                                                            'alias '+row+'='+'"echo ' + "'You are not allowed to run this command'"+'"'+'\n')
+                                                            row+'\n')
+
                                     with open(commands, mode='r') as c:
                                         file = c.read().splitlines()
                                         c.seek(0)
@@ -117,12 +124,49 @@ def commands_config(user, group):
                                                         file.write(
                                                             'alias '+line+'='+'"echo ' + "'You are not allowed to run this command'"+'"'+'\n')
                                 else:
-                                    for row in rows:
-                                        with open(bashrc, mode='a')as file:
-                                            file.write(
-                                                'alias '+row+'='+'"echo ' + "'You are not allowed to run this command'"+'"'+'\n')
-                                    os.system(
-                                        'cat {0} >>/home/{1}/.bashrc '.format(bashrc, user))
+                                    with open(bashrc, mode='a')as file:
+                                        file.write(
+                                            'alias '+row+'='+'"echo ' + "'You are not allowed to run this command'"+'"'+'\n')
+                                    with open(bashrc, mode='r+') as done:
+                                        rows = done.read().splitlines()
+                                        done.seek(0)
+                                        for row in rows:
+                                            with open(bashrc_orig, mode='r') as orig:
+                                                file = orig.read()
+                                                if row in str(file):
+                                                    logger.debug(
+                                                        'Row containing {0} already exist'.format(row))
+
+                                                else:
+                                                    logger.debug(
+                                                        'Row with {0} missing'.format(row))
+                                                    logger.debug(
+                                                        'opening the bashrc file')
+                                                    with open(bashrc_orig, mode='a')as original:
+                                                        logger.debug(
+                                                            'inside the bashrc.done')
+                                                        logger.debug(
+                                                            'WRITING: ' + row)
+                                                        original.write(
+                                                            row+'\n')
+
+                                    with open(commands, mode='r') as c:
+                                        file = c.read().splitlines()
+                                        c.seek(0)
+                                        for line in file:
+                                            with open(bashrc, mode='r+') as done:
+                                                rows = done.read()
+                                                if line in rows:
+                                                    logger.debug(
+                                                        'Row containing {0} already exist'.format(line))
+                                                else:
+                                                    logger.debug(
+                                                        'Row with {0} missing'.format(line))
+                                                    done.write(
+                                                        'alias '+line+'='+'"echo ' + "'You are not allowed to run this command'"+'"'+'\n')
+                                                    with open(bashrc_orig, mode='a')as file:
+                                                        file.write(
+                                                            'alias '+line+'='+'"echo ' + "'You are not allowed to run this command'"+'"'+'\n')
 
                             except Exception as e:
                                 logger.exception(
@@ -134,15 +178,18 @@ def commands_config(user, group):
                     logger.error('(!) Unable to get file size: {}'.format(e))
             else:
                 try:
-                    if os.path.getsize(commands) > 0 and os.path.isfile(back_bashrc):
+                    if os.path.getsize(commands) == 0 & os.path.isfile(back_bashrc):
                         os.system(
                             'cp {0} /home/{1}/.bashrc'.format(back_bashrc, user))
-                        logger.debug('Apllying the original bashrc')
+                        logger.info('Apllying the original bashrc')
+                    else:
+                        logger.warning('File {0} not found'.format(commands))
+                        logger.warning(
+                            "User {0} does not have command's limitation".format(user))
+
                 except OSError as e:
-                    logger.info('(!) Unable to get file size: {}'.format(e))
-                logger.warning('File {0} not found'.format(commands))
-                logger.warning(
-                    "User {0} does not have command's limitation".format(user))
+                    logger.info('(!) Unable to get file size: {0}'.format(e))
+
         except OSError as e:
             logger.info('(!) Unable to get file size: {}'.format(e))
         except Exception as e:
