@@ -45,7 +45,7 @@ logger = logging.getLogger("user-commands")
 
 
 groups = ['svn', 'wheel', 'admin', 'sys_admin',
-          'network_admin', 'security_admin', 'test2', r'test$']
+          'network_admin', 'security_admin']
 
 
 def commands_config(user, group):
