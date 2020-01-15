@@ -11,7 +11,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s Module: %(module)s Process: %(process)d Thread: %(thread)d Message:%(message)s'
+            'format': '%(levelname)s Module: %(module)s Process: %(process)d Message:%(message)s'
         },
     },
     'handlers': {
@@ -25,13 +25,14 @@ LOGGING = {
             'class': 'logging.handlers.SysLogHandler',
             'address': '/dev/log',
             'facility': "local6",
-            'level': logging.INFO,
+            'level': logging.DEBUG,
             'formatter': 'verbose',
         },
     },
     'loggers': {
         'user-commands': {
             'handlers': ['stdout', 'sys-logger6'],
+            'level': logging.INFO,
             'propagate': True,
         },
     }
@@ -168,9 +169,9 @@ def get_users_gid():
 
 if __name__ == "__main__":
     try:
-        if os.system('whoami') != 'root':
-            logger.exception("User Must be ROOT")
-            exit(1)
+        if os.geteuid() != 0:
+            logger.critical("User Must be ROOT!")
+            exit()
         get_users_gid()
     except Exception:
         logger.exception("Exception in get_users_gid(): ")
