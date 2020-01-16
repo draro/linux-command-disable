@@ -13,7 +13,7 @@ optional arguments:
 
 
 
-Note: If launched with no options, the script will disable the commands as described in the description
+__Note:__ If launched with no options, the script will disable the commands as described in the description
 
 
 # Description
