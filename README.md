@@ -10,12 +10,16 @@ __Logs are written in /var/log/disable_commands.log__
 
 
 optional arguments:
-  -h, --help            show this help message and exit
-  --enable=             Add TRUE or FALSE to the option
-  --disable=            Add TRUE or FALSE to the option
-  -u U, --user U        Define the user
-  -c C, --command C     Define the command to enable
 
+  -h, --help            show this help message and exit
+
+  --enable=             Add TRUE or FALSE to the option
+
+  --disable=            Add TRUE or FALSE to the option
+
+  -u U, --user U        Define the user
+
+  -c C, --command C     Define the command to enable
 
 
 __Note:__ If launched with no options, the script will disable the commands as described in the description
