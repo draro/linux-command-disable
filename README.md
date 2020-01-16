@@ -4,7 +4,7 @@ usage: disable_command.py [-h] [--enable= [ENABLE [ENABLE ...]]]
 
 __This program allow you to enable or disable commands for specified users if the options below are used.__
 __If the command is launched with no options the program will try to find the user's group and the existence of__
-__the /tmp/command_{groupname} (containing the list of denied commands) to block the usage of those commands.__
+__the /tmp/command\_{groupname} (containing the list of denied commands) to block the usage of those commands.__
 
 __Logs are written in /var/log/disable_commands.log__
 
