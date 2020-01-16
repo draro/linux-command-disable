@@ -8,13 +8,25 @@ from logging import config
 import argparse
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--enable', action='store_true',
-                    dest='e', help="Enable command")
+parser = argparse.ArgumentParser(
+    prog='disable_command.py',
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+    description='''\
+        This program allow you to enable or disable commands for specified users if the options below are used.
+        If the command is launched with no options the program will try to find the user's group and the existence of
+        the /tmp/command_{groupname} (containing the list of denied commands) to block the usage of those commands.
+        Logs are written in /var/log/disable_commands.log  
+        ''',
+)
+parser.add_argument('--enable=',  dest='enable', nargs="*",
+                    help='Add TRUE or FALSE to the option')
+parser.add_argument('--disable=', dest='disable', nargs="*",
+                    help='Add TRUE or FALSE to the option')
 parser.add_argument('-u', '--user', type=str,
                     dest='u', help="define the user")
 parser.add_argument('-c', '--command', dest='c',
                     type=str, help="define the command to enable")
+
 
 args = parser.parse_args()
 
@@ -241,7 +253,7 @@ def get_users_gid():
                         commands_config(user, group)
 
 
-def enamble_command(u, c):
+def enable_command(enable, u, c):
     logger.info('ENABLE COMMAND FUNCTION')
     command = c
     user = u
@@ -262,24 +274,64 @@ def enamble_command(u, c):
                     file.truncate()
 
 
+def disable_command(disable, u, c):
+    logger.info('Disable COMMAND FUNCTION')
+    command = c
+    user = u
+    logger.info('Disabling the command "{0}" for {1}'.format(command, user))
+    logger.info('searcing for bashrc in /home/{0}'.format(user))
+    for dirName, subDir, fileNames in os.walk('/home/{0}'.format(user)):
+        for f in fileNames:
+            if f.startswith('.bashrc') and not f.endswith('.original'):
+                logger.info('{0}'.format(f))
+                with open("/home/{0}/{1}".format(user, f), "r") as file:
+                    logger.debug('opening /home/{0}/{1}'.format(user, f))
+                    d = file.read()
+                    # for i in d:
+                    if not command in d:
+                        logger.info('{0} not in {1}'.format(command, d))
+                        with open("/home/{0}/{1}".format(user, f), "a") as file:
+                            file.write('alias '+command+'='+'"echo ' +
+                                       "'You are not allowed to run this command'"+'"'+'\n')
+                        # file.write(i)
+                    else:
+                        logger.debug('{0} in {1}'.format(command, d))
+
+
 if __name__ == "__main__":
     try:
         if os.geteuid() != 0:
             logger.critical("User Must be ROOT!")
             exit(1)
-        if args.e and args.c and args.u:
-            enamble_command(args.u, args.c)
+        if args.e and args.c and args.u and not args.d:
+            enable_command(args.e, args.u, args.c)
         elif args.e and args.c and not args.u:
             logger.critical("the option -u shall be used")
         elif args.e and not args.c and args.u:
             logger.critical("the option -c shall be used")
         elif not args.e and not args.c and args.u:
             logger.critical("Missing arguments")
-        elif not args.e and args.c and args.u:
+        elif not args.e and args.c and args.u and not args.d:
             logger.critical("Argument --enable required")
             print("Argument --enable required")
-        elif not args.e and args.c and not args.u:
+        elif not args.e and args.c and not args.u and not args.d:
             logger.critical("Missing arguments")
+        elif args.d and args.c and args.u and not args.e:
+            disable_command(args.d, args.u, args.c)
+        elif args.d and args.c and not args.u and not args.e:
+            logger.critical(
+                "The option -u shall be used. To disable commands for all the user do not add any option")
+        elif args.d and not args.c and args.u and not args.d:
+            logger.critical(
+                "The option -c shall be used. To disable commands for all the user do not add any option")
+        elif not args.d and not args.c and args.u and not args.d:
+            logger.critical(
+                "Missing arguments. Run disable_commands.py -h for the help")
+        elif not args.d and args.c and args.u and not args.d:
+            logger.critical("Argument --enable or --disable required")
+        elif not args.d and args.c and not args.u and not args.d:
+            logger.critical(
+                "Missing arguments. Run disable_commands.py -h for the help")
         else:
             get_users_gid()
     except Exception as e:
