@@ -2,10 +2,15 @@
 usage: disable_commands.py [-h] [--enable] [-u U] [-c C]
 
 optional arguments:
+
   -h, --help         show this help message and exit
+
   --enable           Enable command
+
   -u U, --user U     define the user
+
   -c C, --command C  define the command to enable
+
 
 
 Note: If launched with no options, the script will disable the commands as described in the description
