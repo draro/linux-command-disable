@@ -11,7 +11,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--enable', action='store_true',
                     dest='e', help="Enable command")
-parser.add_argument('-u', '--userr', type=str,
+parser.add_argument('-u', '--user', type=str,
                     dest='u', help="define the user")
 parser.add_argument('-c', '--command', dest='c',
                     type=str, help="define the command to enable")
