@@ -7,9 +7,12 @@ optional arguments:
   -u U, --userr U    define the user
   -c C, --command C  define the command to enable
 
+Note: If launched with no options, the script will disable the commands as described in the description
+
 
 # Description
  Unable users to run specified commands. 
+
  The script it is supposed to be used when a LDAP connection exists and the home directory is created under /home.
  The get_users_gid function will create a list of user's home directory and then check for their group and pass the user and gropu to the commands_config function.
  
