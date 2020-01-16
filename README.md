@@ -1,15 +1,20 @@
 # Usage
-usage: disable_commands.py [-h] [--enable] [-u U] [-c C]
+usage: disable_command.py [-h] [--enable= [ENABLE [ENABLE ...]]]
+                          [--disable= [DISABLE [DISABLE ...]]] [-u U] [-c C]
+
+__This program allow you to enable or disable commands for specified users if the options below are used.__
+__If the command is launched with no options the program will try to find the user's group and the existence of__
+__the /tmp/command_{groupname} (containing the list of denied commands) to block the usage of those commands.__
+
+__Logs are written in /var/log/disable_commands.log__
+
 
 optional arguments:
-
-  -h, --help         show this help message and exit
-
-  --enable           Enable command
-
-  -u U, --user U     define the user
-
-  -c C, --command C  define the command to enable
+  -h, --help            show this help message and exit
+  --enable=             Add TRUE or FALSE to the option
+  --disable=            Add TRUE or FALSE to the option
+  -u U, --user U        Define the user
+  -c C, --command C     Define the command to enable
 
 
 
