@@ -28,13 +28,13 @@ parser.add_argument('-u', '--user', type=str,
 parser.add_argument('-c', '--command', dest='c',
                     type=str, help="define the command to enable")
 parser.add_argument(
-    "--log", help="Provide logging level. Example --log debug'")
+    "--log", help='''Provide logging level. Example --log debug''')
 
 
 args = parser.parse_args()
-# etc.
+
 level_config = {'debug': logging.DEBUG, 'info': logging.INFO,
-                'warning': logging.WARNING, 'creitical': logging.CRITICAL}
+                'warning': logging.WARNING, 'creitical': logging.CRITICAL, 'error': logging.ERROR, 'exception': logging.ERROR}
 if args.log:
     log_level = level_config[args.log.lower()]
 else:
@@ -343,5 +343,5 @@ if __name__ == "__main__":
         else:
             get_users_gid()
     except Exception as e:
-        logger.exception("Exception: {0}".format(e))
+        logger.critical("Exception: {0}".format(e))
         exit(1)
