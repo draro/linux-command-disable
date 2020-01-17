@@ -27,10 +27,18 @@ parser.add_argument('-u', '--user', type=str,
                     dest='u', help="define the user")
 parser.add_argument('-c', '--command', dest='c',
                     type=str, help="define the command to enable")
+parser.add_argument(
+    "--log", help="Provide logging level. Example --log debug'")
 
 
 args = parser.parse_args()
-
+# etc.
+level_config = {'debug': logging.DEBUG, 'info': logging.INFO,
+                'warning': logging.WARNING, 'creitical': logging.CRITICAL}
+if args.log:
+    log_level = level_config[args.log.lower()]
+else:
+    log_level = level_config['info']
 
 LOGGING = {
     'version': 1,
@@ -44,21 +52,21 @@ LOGGING = {
         'stdout': {
             'class': 'logging.StreamHandler',
             'stream': sys.stdout,
-            'level': logging.DEBUG,
+            'level': log_level,
             'formatter': 'verbose',
         },
         'sys-logger6': {
             'class': 'logging.handlers.SysLogHandler',
             'address': '/dev/log',
             'facility': "local6",
-            'level': logging.DEBUG,
+            'level': log_level,
             'formatter': 'verbose',
         },
     },
     'loggers': {
         'user-commands': {
             'handlers': ['stdout', 'sys-logger6'],
-            'level': logging.INFO,
+            'level': log_level,
             'propagate': True,
         },
     }
@@ -202,7 +210,6 @@ def commands_config(user, group):
                             'File {0} not found'.format(back_bashrc))
                 except OSError as e:
                     logger.error('(!) Unable to get file size: {}'.format(e))
-                logger.error('i am line 177')
                 # for fileList in os.listdir('/home/{0}/'.format(user)):
                 #     if fileList.startswith('.bashrc.done'):
                 #         logger.error('{0}'.format(fileList))
