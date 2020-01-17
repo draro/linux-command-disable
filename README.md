@@ -1,6 +1,7 @@
 # Usage
 usage: disable_command.py [-h] [--enable= [TRUE/FALSE]]
-                          [--disable= [[TRUE/FALSE]] [-u U] [-c C]
+                          [--disable= [[TRUE/FALSE]] [-u U] [-c C] [--log LOG]
+
 
 __This program allow you to enable or disable commands for specified users if the options below are used.__
 __If the command is launched with no options the program will try to find the user's group and the existence of__
@@ -31,7 +32,7 @@ optional arguments:
 
 
 
-__Note:__ If launched with no options, the script will disable the commands as described in the description
+### __Note:__ If launched with no options, the script will disable the commands as described in the description
 
 
 # Description
