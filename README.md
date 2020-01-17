@@ -32,7 +32,19 @@ __Note:__ If launched with no options, the script will disable the commands as d
  The get_users_gid function will create a list of user's home directory and then check for their group and pass the user and gropu to the commands_config function.
  
 
- commands_config expect that in the /tmp there are predifine files for each user group for example: /tmp/commands_sysadmin where sysadmin is the groupname
+ commands_config expect that in the /tmp there are predifine files, containing the list of commands, for each user group for example: /tmp/commands_sysadmin where sysadmin is the groupname
+
+ /tmp/commands_sysadmin content:
+
+ yum
+
+ reboot
+
+ shutdown
+
+ 
+ Once found them the script is going to create aliases in the user ".bashrc" file. At that point once the user will log in the system, he/she won't be able to run the commands.
+
 
 
 
