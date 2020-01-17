@@ -21,17 +21,12 @@ optional arguments:
 
   -c C, --command C     Define the command to enable
 
-  --log                 Provide logging level. Example --log debug
-  
-                         Accepted Options:
-
-                        debug --> For development environment
-
-                        info --> Provide info, warnings and errors
-
-                        warnings --> provide warnings and errors
-
-                        errors --> provide only errors
+  --log                 Provide logging level. Example --log debug.  
+  Accepted Options:   
+  debug --> For development environment  
+  info --> Provide info, warnings and errors  
+  warnings --> provide warnings and errors  
+  errors --> provide only errors
 
 
 
