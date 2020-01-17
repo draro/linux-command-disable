@@ -19,9 +19,9 @@ parser = argparse.ArgumentParser(
         Logs are written in /var/log/disable_commands.log  
         ''',
 )
-parser.add_argument('--enable=',  dest='enable', nargs="*",
+parser.add_argument('--enable=',  dest='e', nargs="*",
                     help='Add TRUE or FALSE to the option')
-parser.add_argument('--disable=', dest='disable', nargs="*",
+parser.add_argument('--disable=', dest='d', nargs="*",
                     help='Add TRUE or FALSE to the option')
 parser.add_argument('-u', '--user', type=str,
                     dest='u', help="define the user")
