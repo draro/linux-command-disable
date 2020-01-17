@@ -6,7 +6,7 @@ import sys
 import fnmatch
 from logging import config
 import argparse
-from disable_commands import *
+from .disable_commands import get_users_gid, disable_command, enable_command
 parser = argparse.ArgumentParser(
     prog='disable_command.py',
     formatter_class=argparse.RawDescriptionHelpFormatter,
