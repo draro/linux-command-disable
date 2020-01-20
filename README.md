@@ -48,15 +48,17 @@ optional arguments:
  
 
 ## commands_config(user, group)
-    User and Group are passed automatically from the get_users_gid funcion
-    It search for the denied command list per user goup.
-    The command's list file shall be located in /tmp and the filename shall be commands_{groupname}.
-    After found the file the program will write a bashrc.done_{group} and use that file to aplly the
-    rules in the user .bashrc file
-    
-    commands_config expect that in the /tmp there are predifine files, containing the list of commands, for each user group for example: /tmp/commands_sysadmin where sysadmin is the groupname
+ User and Group are passed automatically from the get_users_gid funcion
+ 
+ It search for the denied command list per user goup.
+ 
+ The command's list file shall be located in /tmp and the filename shall be commands_{groupname}.
+ 
+ After found the file the program will write a bashrc.done_{group} and use that file to aplly the rules in the user .bashrc file
+ 
+ __commands_config()__ expect that in the /tmp there are predifine files, containing the list of commands, for each user group for example: /tmp/commands_sysadmin where sysadmin is the groupname.
 
- /tmp/commands_sysadmin content:
+ __/tmp/commands_sysadmin content:__
 
  yum
 
