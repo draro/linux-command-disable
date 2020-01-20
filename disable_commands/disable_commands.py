@@ -45,7 +45,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s Module: %(module)s Process: %(process)d Message:%(message)s'
+            'format': '%(levelname)s Module: %(module)s Process: %(process)d Message: %(message)s'
         },
     },
     'handlers': {
@@ -244,6 +244,12 @@ def commands_config(user, group):
 
 
 def get_users_gid():
+    '''
+    get_user_gid will list users home expecting that the username and its own home deirectory have the same name.
+    Example:  for user test, the get_users_gid expects to find a /home/test directory.
+    Once found it uses the "id" command to search the appartenency to groups and then call the 
+    commands_config function passing the user and group arguments.
+    '''
     tmp_file = '/tmp/tmp.txt'
     tmp_file2 = '/tmp/tmp_file'
     users_list = os.system("ls /home >{0}".format(tmp_file))
@@ -262,7 +268,11 @@ def get_users_gid():
 
 
 def enable_command(enable, u, c):
-    logger.info('ENABLE COMMAND FUNCTION')
+    '''
+    enable_command(enable, u, c) get the arguments from the argparse and remove lines in the .bashrc file.
+    It is also expected that username and home directory folder, matches.
+    '''
+    logger.debug('ENABLE COMMAND FUNCTION')
     command = c
     user = u
     logger.info('Enabling the command "{0}" for {1}'.format(command, user))
@@ -283,11 +293,15 @@ def enable_command(enable, u, c):
 
 
 def disable_command(disable, u, c):
-    logger.info('Disable COMMAND FUNCTION')
+    '''
+    disable_command(disable, u, c) get the arguments from the argparse and add a line in the .bashrc file.
+    It is also expected that username and home directory folder, matches.
+    '''
+    logger.debug('Disable COMMAND FUNCTION')
     command = c
     user = u
     logger.info('Disabling the command "{0}" for {1}'.format(command, user))
-    logger.info('searcing for bashrc in /home/{0}'.format(user))
+    logger.debug('searcing for bashrc in /home/{0}'.format(user))
     for dirName, subDir, fileNames in os.walk('/home/{0}'.format(user)):
         for f in fileNames:
             if f.startswith('.bashrc') and not f.endswith('.original'):
@@ -297,7 +311,7 @@ def disable_command(disable, u, c):
                     d = file.read()
                     # for i in d:
                     if not command in d:
-                        logger.info('{0} not in {1}'.format(command, d))
+                        logger.debug('{0} not in {1}'.format(command, d))
                         with open("/home/{0}/{1}".format(user, f), "a") as file:
                             file.write('alias '+command+'='+'"echo ' +
                                        "'You are not allowed to run this command'"+'"'+'\n')
@@ -308,30 +322,34 @@ def disable_command(disable, u, c):
 
 if __name__ == "__main__":
     try:
+        logger.debug('Check if UID = 0')
         if os.geteuid() != 0:
+            logger.debug(
+                'User is not Root. Current UID = {0}'.format(os.geteuid()))
             logger.critical("User Must be ROOT!")
             exit(1)
         if args.e and args.c and args.u and not args.d:
             enable_command(args.e, args.u, args.c)
-        elif args.e and args.c and not args.u:
+        elif args.e and args.c and not args.u and not args.d:
             logger.critical("the option -u shall be used")
-        elif args.e and not args.c and args.u:
+        elif args.e and not args.c and args.u and not args.d:
             logger.critical("the option -c shall be used")
-        elif not args.e and not args.c and args.u:
+        elif not args.e and not args.c and args.u and not args.d:
             logger.critical("Missing arguments")
         elif not args.e and args.c and args.u and not args.d:
-            logger.critical("Argument --enable required")
-            print("Argument --enable required")
+            logger.critical(
+                "Argument --enable or --disable required. Use the --help or -h to see the help")
         elif not args.e and args.c and not args.u and not args.d:
-            logger.critical("Missing arguments")
+            logger.critical(
+                "Missing arguments. Run disable_commands.py -h for the help")
         elif args.d and args.c and args.u and not args.e:
             disable_command(args.d, args.u, args.c)
         elif args.d and args.c and not args.u and not args.e:
             logger.critical(
-                "The option -u shall be used. To disable commands for all the user do not add any option")
+                "The option -u shall be used. To disable commands for all users do not add any option")
         elif args.d and not args.c and args.u and not args.d:
             logger.critical(
-                "The option -c shall be used. To disable commands for all the user do not add any option")
+                "The option -c shall be used. To disable commands for all user do not add any option")
         elif not args.d and not args.c and args.u and not args.d:
             logger.critical(
                 "Missing arguments. Run disable_commands.py -h for the help")
